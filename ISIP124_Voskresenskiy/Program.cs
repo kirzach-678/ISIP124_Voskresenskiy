@@ -211,7 +211,7 @@ namespace ISIP124_Voskresenskiy
             double average = sum / count;
 
             Console.WriteLine();
-            Console.WriteLine("--- СТАТИСТИКА ---");
+            Console.WriteLine("статистика");
             Console.WriteLine("Количество операций: " + count);
             Console.WriteLine("Сумма всех трат:     {0:F2} руб.", sum);
             Console.WriteLine("Средняя трата:       {0:F2} руб.", average);
@@ -222,11 +222,55 @@ namespace ISIP124_Voskresenskiy
         // сортировка пузырьком
         static void SortByPrice()
         {
+            Console.WriteLine();
+            Console.WriteLine("1 - по возрастанию цены");
+            Console.WriteLine("2 - по убыванию цены");
+            Console.Write("Ваш выбор: ");
+            string mode = (Console.ReadLine() ?? "").Trim();
+
+            bool ascending;
+            if (mode == "1") ascending = true;
+            else if (mode == "2") ascending = false;
+            else
+            {
+                Console.WriteLine("Нужно ввести 1 или 2. Сортировка отменена.");
+                return;
+            }
+
+            // пузырьковая сортировка
+            for (int i = 0; i < count - 1; i++)
+            {
+                for (int j = 0; j < count - 1 - i; j++)
+                {
+                    bool needSwap;
+                    if (ascending)
+                        needSwap = prices[j] > prices[j + 1];
+                    else
+                        needSwap = prices[j] < prices[j + 1];
+
+                    if (needSwap)
+                    {
+                        // меняем местами суммы через временную переменную
+                        double tempPrice = prices[j];
+                        prices[j] = prices[j + 1];
+                        prices[j + 1] = tempPrice;
+
+                        // и обязательно названия, иначе цены уедут от своих товаров
+                        string tempName = names[j];
+                        names[j] = names[j + 1];
+                        names[j + 1] = tempName;
+                    }
+                }
+            }
+
+            Console.WriteLine("Сортировка выполнена");
+            PrintAll();
         }
 
         // конвертация валют
         static void ConvertCurrency()
         {
+
         }
 
         // поиск по названию
