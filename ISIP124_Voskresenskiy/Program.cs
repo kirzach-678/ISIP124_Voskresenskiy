@@ -336,6 +336,42 @@ namespace ISIP124_Voskresenskiy
         // поиск по названию
         static void SearchByName()
         {
+            Console.WriteLine();
+            Console.Write("Введите слово или часть названия для поиска: ");
+            string query = (Console.ReadLine() ?? "").Trim();
+
+            if (query.Length == 0)
+            {
+                Console.WriteLine("Пустой запрос. Поиск отменён.");
+                return;
+            }
+
+            int found = 0;
+            double foundSum = 0;
+
+            Console.WriteLine();
+            Console.WriteLine("{0,-4} {1,-40} {2,14}", "№", "Название", "Сумма, руб.");
+            Console.WriteLine(new string('-', 60));
+
+            for (int i = 0; i < count; i++)
+            {
+                // IndexOf ищет подстроку внутри строки.
+                // OrdinalIgnoreCase = не различать заглавные и строчные буквы.
+                // если подстрока не найдена, IndexOf возвращает -1.
+                if (names[i].IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    Console.WriteLine("{0,-4} {1,-40} {2,14:F2}", i + 1, names[i], prices[i]);
+                    found++;
+                    foundSum += prices[i];
+                }
+            }
+
+            Console.WriteLine(new string('-', 60));
+            if (found == 0)
+                Console.WriteLine("Ничего не найдено по запросу \"" + query + "\".");
+            else
+                Console.WriteLine("Найдено записей: {0}, на сумму {1:F2} руб.", found, foundSum);
         }
     }
+
 }
