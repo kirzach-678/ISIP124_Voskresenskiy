@@ -270,7 +270,67 @@ namespace ISIP124_Voskresenskiy
         // конвертация валют
         static void ConvertCurrency()
         {
+            // курс = сколько рублей стоит 1 единица валюты.
+            string[] currencyNames = { "Доллар США (USD)", "Евро (EUR)", "Китайский юань (CNY)", "Казахстанский тенге (KZT)" };
+            double[] currencyRates = { 90.00, 98.50, 12.40, 0.18 };
 
+            Console.WriteLine();
+            Console.WriteLine("-_- КОНВЕРТАЦИЯ ВАЛЮТЫ -_-");
+            for (int i = 0; i < currencyNames.Length; i++)
+                Console.WriteLine("{0}. {1} - {2:F2} руб.", i + 1, currencyNames[i], currencyRates[i]);
+            Console.WriteLine("0. Ввести свой курс вручную");
+            Console.Write("Ваш выбор: ");
+
+            string choice = (Console.ReadLine() ?? "").Trim();
+
+            double rate;   // курс, который в итоге используем
+            string title;  // как называется валюта
+
+            if (choice == "0")
+            {
+                Console.Write("Введите курс (сколько рублей за 1 единицу валюты): ");
+                string rateText = (Console.ReadLine() ?? "").Trim().Replace(" ", "").Replace(',', '.');
+
+                if (!double.TryParse(rateText, NumberStyles.Float, CultureInfo.InvariantCulture, out rate) || rate <= 0)
+                {
+                    Console.WriteLine("Некорректный курс. Конвертация отменена.");
+                    return;
+                }
+
+                Console.Write("Как назвать валюту? ");
+                title = (Console.ReadLine() ?? "").Trim();
+                if (title.Length == 0) title = "своя валюта";
+            }
+            else
+            {
+                int number;
+                if (!int.TryParse(choice, out number) || number < 1 || number > currencyNames.Length)
+                {
+                    Console.WriteLine("Нет такого пункта. Конвертация отменена.");
+                    return;
+                }
+
+                // в меню пункты нумеруются с 1, а элементы массива - с 0. Отсюда - 1.
+                rate = currencyRates[number - 1];
+                title = currencyNames[number - 1];
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Пересчёт по курсу {0:F2} руб. за 1 {1}", rate, title);
+            Console.WriteLine("{0,-4} {1,-40} {2,14} {3,14}", "№", "Название", "Сумма, руб.", "В валюте");
+            Console.WriteLine(new string('-', 76));
+
+            double totalRub = 0;
+            for (int i = 0; i < count; i++)
+            {
+                // делим рубли на курс - получаем сумму в выбранной валюте.
+                Console.WriteLine("{0,-4} {1,-40} {2,14:F2} {3,14:F2}",
+                                  i + 1, names[i], prices[i], prices[i] / rate);
+                totalRub += prices[i];
+            }
+
+            Console.WriteLine(new string('-', 76));
+            Console.WriteLine("{0,-4} {1,-40} {2,14:F2} {3,14:F2}", "", "ИТОГО:", totalRub, totalRub / rate);
         }
 
         // поиск по названию
